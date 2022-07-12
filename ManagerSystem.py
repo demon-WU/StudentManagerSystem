@@ -1,6 +1,7 @@
 from NumException import NumException
 from Menu_Student import menu_student
 from Student import Student
+import os
 
 
 class ManagerSystem(object):
@@ -99,7 +100,7 @@ class ManagerSystem(object):
         # 遍历寻找学员
         for i in self.stuList:
             if i.name == name:
-                print(i.__str__)
+                print(i.__str__())
                 sex = input('修改性别为:')
                 number = input('修改电话号码为:')
                 i.sex = sex
@@ -117,7 +118,7 @@ class ManagerSystem(object):
         name = input('请输入需要查找的学员姓名:')
         for i in self.stuList:
             if i.name == name:
-                print(i.__str__)
+                print(i.__str__())
                 pass
             else:
                 print('未查询到该学员信息')
@@ -129,19 +130,39 @@ class ManagerSystem(object):
         :return:
         '''
         for i in self.stuList:
-            print(i.__str__)
+            print(i.__str__())
         pass
     def save_student(self):
-        '''
-
-        :return:
-        '''
-        for i in self.stuList:
-
+        # 打开文件
+        f = open('student.data','w',encoding='utf-8')
+        # 将列表对象地址转换为字典值
+        newList = [i.__dict__ for i in self.stuList]
+        print(newList)
+        # 将列表写入文件中
+        f.write(str(newList))
+        # 关闭文件操作，防止溢出内存
+        f.close
         pass
     def load_student(self):
         '''
-
         :return:
         '''
+        try:
+            # 尝试只读模式打开数据文件，文件不存在则提示用户；文件存在(没有异常)则读取数据
+            f = open('student.data', 'r', encoding='utf-8')
+            pass
+        except:
+            f = open('student.data', 'w', encoding='utf-8')
+            pass
+        else:
+            # 读取数据
+            data = f.read()
+            # 字符串转化为列表、元组、字典
+            new_list = eval(data)
+            # 将字典值数据转换为对象重新存储在stuList列表中
+            self.stuList = [Student(i['name'], i['sex'], i['number']) for i in new_list]
+        finally:
+            f.close()
+            pass
         pass
+    pass
